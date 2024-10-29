@@ -1,4 +1,5 @@
 import { getCurrent } from "@/features/auth/queries";
+import { CreateWorkSpaceForm } from "@/features/workspaces/components/create-workspace-form";
 import { redirect } from "next/navigation";
 
 
@@ -13,8 +14,8 @@ export default async function Home() {
 
 
   return (
-    <div className="">
-      This is the home page
+    <div className="  border-gray-700 border-8 ">
+      <CreateWorkSpaceForm />
     </div>
   );
 }
