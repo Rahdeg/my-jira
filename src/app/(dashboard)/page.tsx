@@ -1,6 +1,7 @@
-import { getCurrent } from "@/features/auth/queries";
-import { CreateWorkSpaceForm } from "@/features/workspaces/components/create-workspace-form";
+
 import { redirect } from "next/navigation";
+import { getWorkspaces } from "@/features/workspaces/queries";
+import { getCurrent } from "@/features/auth/queries";
 
 
 
@@ -11,11 +12,20 @@ export default async function Home() {
 
   if (!user) redirect("/sign-in");
 
+  const workspaces = await getWorkspaces();
+
+  if (workspaces?.total === 0) {
+    redirect("/workspaces/create")
+  } else {
+    redirect(`/workspaces/${workspaces?.documents[0].$id}`)
+  }
+
+
 
 
   return (
-    <div className="  border-gray-700 border-8 ">
-      <CreateWorkSpaceForm />
+    <div>
+      Home page
     </div>
   );
 }
