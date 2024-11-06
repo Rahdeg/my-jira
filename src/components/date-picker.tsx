@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "./ui/button"
 import { Calendar } from "./ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
-import { date } from "zod"
+
 
 interface DatePickerProps {
     value: Date | undefined;
@@ -21,7 +21,7 @@ export const DatePicker = ({ value, onChange, className, placeholder = "Select d
     return (
         <Popover>
             <PopoverTrigger asChild>
-                <Button variant="outline" size="lg" className={cn("w-full justify-start text-left font-normal px-3", !value && "text-muted-foreground")}>
+                <Button variant="outline" size="lg" className={cn("w-full justify-start text-left font-normal px-3", !value && "text-muted-foreground", className)}>
                     <CalendarIcon className=" mr-2 h-4 w-4" />
                     {value ? format(value, "PPP") : <span> {placeholder} </span>}
                 </Button>
