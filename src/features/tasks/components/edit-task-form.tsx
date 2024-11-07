@@ -13,39 +13,40 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { createTaskSchema } from "../schemas";
-import { useCreateTask } from "../api/use-create-task";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { DatePicker } from "@/components/date-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MemberAvatar } from "@/features/members/components/member-avatar";
-import { TaskStatus } from "../types";
+import { Task, TaskStatus } from "../types";
 import { ProjectAvatar } from "@/features/projects/components/project-avatar";
+import { useUpdateTask } from "../api/use-update-task";
 
-interface CreateTaskFormProps {
+interface EditTaskFormProps {
     onCancel?: () => void;
     projectOptions: { id: string, name: string, imageUrl: string }[];
     memberOptions: { id: string, name: string }[];
+    initialValues: Task;
 };
 
-export const CreateTaskForm = ({ onCancel, projectOptions, memberOptions }: CreateTaskFormProps) => {
+export const EditTaskForm = ({ onCancel, projectOptions, memberOptions, initialValues }: EditTaskFormProps) => {
 
     const workspaceId = useWorkspaceId();
 
-    const { mutate, isPending } = useCreateTask();
+    const { mutate, isPending } = useUpdateTask();
 
     const router = useRouter();
 
 
-
     const form = useForm<z.infer<typeof createTaskSchema>>({
-        resolver: zodResolver(createTaskSchema.omit({ workspaceId: true })),
+        resolver: zodResolver(createTaskSchema.omit({ workspaceId: true, description: true })),
         defaultValues: {
-            workspaceId,
+            ...initialValues,
+            dueDate: initialValues.dueDate ? new Date(initialValues.dueDate) : undefined
         }
     })
 
     const onSubmit = (values: z.infer<typeof createTaskSchema>) => {
-        mutate({ json: { ...values, workspaceId } }, {
+        mutate({ json: values, param: { taskId: initialValues.$id } }, {
             onSuccess: ({ data }) => {
                 form.reset();
                 // onCancel?.();
@@ -60,7 +61,7 @@ export const CreateTaskForm = ({ onCancel, projectOptions, memberOptions }: Crea
         <Card className=" w-full h-full border-none shadow-none">
             <CardHeader className=" flex p-7">
                 <CardTitle className=" text-xl font-bold">
-                    Create a new task
+                    Edit a task
                 </CardTitle>
             </CardHeader>
             <div className=" px-7">
@@ -223,7 +224,7 @@ export const CreateTaskForm = ({ onCancel, projectOptions, memberOptions }: Crea
                                 Cancel
                             </Button>
                             <Button disabled={isPending} size="lg" type="submit" >
-                                Create Task
+                                Save Changes
                             </Button>
                         </div>
 
