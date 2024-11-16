@@ -1,5 +1,7 @@
 "use client"
 
+import { PageError } from "@/components/page-error";
+import { PageLoader } from "@/components/page-loader";
 import { useGetWorkspaceInfo } from "@/features/workspaces/api/use-get-workspace-info"
 import { JoinWorkspaceForm } from "@/features/workspaces/components/join-workspace-form";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
@@ -12,19 +14,13 @@ export const InviteLinkClient = () => {
 
 
     if (isLoading) {
-        return (<div className=' h-full flex items-center justify-center'>
-            <Loader className=' size-6 animate-spin text-muted-foreground' />
-        </div>)
+        return <PageLoader />
     }
 
 
 
     if (!data) {
-        return (
-            <div className=' h-full flex items-center justify-center'>
-                <TriangleAlertIcon className=' size-6  text-muted-foreground' />
-            </div>
-        )
+        return <PageError message="No workspace info" />
     }
 
     return (

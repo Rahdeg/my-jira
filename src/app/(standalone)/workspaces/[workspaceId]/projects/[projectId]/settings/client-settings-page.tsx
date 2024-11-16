@@ -1,5 +1,7 @@
 "use client"
 
+import { PageError } from "@/components/page-error";
+import { PageLoader } from "@/components/page-loader";
 import { useGetProject } from "@/features/projects/api/use-get-project";
 import { EditProjectForm } from "@/features/projects/components/edit-project-form";
 import { useProjectId } from "@/features/projects/hooks/use-project-id";
@@ -17,19 +19,13 @@ export const ClientSettingsPage = () => {
 
 
     if (isLoading) {
-        return (<div className=' h-full flex items-center justify-center'>
-            <Loader className=' size-6 animate-spin text-muted-foreground' />
-        </div>)
+        return <PageLoader />
     }
 
 
 
     if (!initialValues) {
-        return (
-            <div className=' h-full flex items-center justify-center'>
-                <TriangleAlertIcon className=' size-6  text-muted-foreground' />
-            </div>
-        )
+        return <PageError message="Project not found" />
     }
 
 

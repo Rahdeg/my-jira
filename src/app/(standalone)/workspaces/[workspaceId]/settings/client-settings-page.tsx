@@ -1,5 +1,7 @@
 "use client"
 
+import { PageError } from "@/components/page-error";
+import { PageLoader } from "@/components/page-loader";
 import { useGetWorkspace } from "@/features/workspaces/api/use-get-workspace";
 import { EditWorkspaceForm } from "@/features/workspaces/components/edit-workspace-form";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id"
@@ -13,19 +15,13 @@ export const ClientSettingsPage = () => {
 
 
     if (isLoading) {
-        return (<div className=' h-full flex items-center justify-center'>
-            <Loader className=' size-6 animate-spin text-muted-foreground' />
-        </div>)
+        return <PageLoader />
     }
 
 
 
     if (!initialValues) {
-        return (
-            <div className=' h-full flex items-center justify-center'>
-                <TriangleAlertIcon className=' size-6  text-muted-foreground' />
-            </div>
-        )
+        return <PageError message="workspace not found" />
     }
 
 

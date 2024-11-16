@@ -14,11 +14,24 @@ import { DataTable } from "./data-table"
 import { columns } from "./columns"
 import { DataKanban } from "./data-kanban"
 import { TaskStatus } from "../types"
+import { useCallback } from "react"
+import { useBulkUpdateTask } from "../api/use-bulk-update-tasks"
+import { DataCalendar } from "./data-calendar"
+import { useProjectId } from "@/features/projects/hooks/use-project-id"
+
+interface TaskViewSwitcherProps {
+    hideProjectFilter?: boolean;
+}
 
 
-export const TaskViewSwitcher = () => {
+export const TaskViewSwitcher = ({ hideProjectFilter }: TaskViewSwitcherProps) => {
 
-    const [{ status, assigneeId, projectId, dueDate }, setFilters] = useTaskFilters();
+
+    const [{ status, assigneeId, projectId, dueDate },] = useTaskFilters();
+
+    const paramProjectId = useProjectId();
+
+    const { mutate: bulkUpdate } = useBulkUpdateTask();
 
     const [view, setView] = useQueryState("task-view", {
         defaultValue: "table",
@@ -26,10 +39,14 @@ export const TaskViewSwitcher = () => {
 
     const workspaceId = useWorkspaceId();
     const { open } = useCreateTaskModal();
-    const { data: tasks, isLoading: loadingTask } = useGetTasks({ workspaceId, status, assigneeId, projectId, dueDate });
+    const { data: tasks, isLoading: loadingTask } = useGetTasks({ workspaceId, status, assigneeId, projectId: paramProjectId || projectId, dueDate });
 
 
-
+    const onKanbanChange = useCallback((tasks: { $id: string; status: TaskStatus; position: number }[]) => {
+        bulkUpdate({
+            json: { tasks }
+        })
+    }, [bulkUpdate])
 
     return (
         <Tabs defaultValue={view} onValueChange={setView} className=" flex-1 w-full border rounded-lg">
@@ -52,7 +69,7 @@ export const TaskViewSwitcher = () => {
                     </Button>
                 </div>
                 <DottedSeparator className="my-4" />
-                <DataFilters />
+                <DataFilters hideProjectFilter={hideProjectFilter} />
                 <DottedSeparator className="my-4" />
                 {
                     loadingTask ? (
@@ -65,10 +82,10 @@ export const TaskViewSwitcher = () => {
                                 <DataTable columns={columns} data={tasks?.documents ?? []} />
                             </TabsContent>
                             <TabsContent value="kanban" className="mt-0">
-                                <DataKanban data={tasks?.documents ?? []} />
+                                <DataKanban onChange={onKanbanChange} data={tasks?.documents ?? []} />
                             </TabsContent>
-                            <TabsContent value="calender" className="mt-0">
-                                {JSON.stringify(tasks)}
+                            <TabsContent value="calender" className="mt-0 h-full pb-4">
+                                <DataCalendar data={tasks?.documents ?? []} />
                             </TabsContent>
                         </>
                     )
