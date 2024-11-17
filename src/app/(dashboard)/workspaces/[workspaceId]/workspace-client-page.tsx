@@ -19,7 +19,7 @@ import { Task, TaskStatus } from "@/features/tasks/types";
 import { useGetWorkspaceAnalytics } from "@/features/workspaces/api/use-get-workspace-analytics";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { formatDistanceToNow } from "date-fns";
-import { Calendar as CalenderIcon, PlusIcon, Settings, SettingsIcon } from "lucide-react";
+import { Calendar as CalenderIcon, PlusIcon, SettingsIcon } from "lucide-react";
 import Link from "next/link";
 
 
