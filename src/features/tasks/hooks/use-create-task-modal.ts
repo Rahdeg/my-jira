@@ -1,15 +1,25 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useQueryState, parseAsBoolean } from "nuqs";
+import { useQueryState } from "nuqs";
 import { TaskStatus } from "../types";
 
+// Custom parser to handle TaskStatus | null
+const parseAsTaskStatus = {
+  parse: (value: string | null): TaskStatus | null => {
+    if (!value) return null; // Handle null or undefined
+    if (Object.values(TaskStatus).includes(value as TaskStatus)) {
+      return value as TaskStatus;
+    }
+    return null; // Fallback for invalid values
+  },
+};
+
 export const useCreateTaskModal = () => {
-  const [isOpen, setIsOpen] = useQueryState(
+  const [isOpen, setIsOpen] = useQueryState<TaskStatus | null>(
     "create-task",
-    parseAsBoolean.withDefault(false).withOptions({ clearOnDefault: true })
+    parseAsTaskStatus
   );
 
-  const open = (initialStatus: TaskStatus) => setIsOpen(true);
-  const close = () => setIsOpen(false);
+  const open = (initialStatus: TaskStatus) => setIsOpen(initialStatus);
+  const close = () => setIsOpen(null);
 
   return {
     isOpen,
